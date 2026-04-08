@@ -59,6 +59,45 @@ After installation, enable the background daemon:
 systemctl --user enable --now orbit
 ```
 
+<details>
+<summary><b>NixOS</b></summary>
+
+Add to your `flake.nix`:
+
+```nix
+{
+  inputs.orbit.url = "github:LifeOfATitan/orbit";
+
+  outputs = { self, nixpkgs, orbit, ... }: {
+    nixosConfigurations.your-hostname = nixpkgs.lib.nixosSystem {
+      modules = [
+        orbit.nixosModules.orbit
+        # ... other modules
+      ];
+    };
+  };
+}
+```
+
+In your `configuration.nix`:
+
+```nix
+{
+  services.orbit = {
+    enable = true;
+    position = "top-right";  # center, top-left, top-right, bottom-left, bottom-right
+    margin = 12;            # Window margin in pixels
+    # user = "username";   # Optional: run as specific user (null for systemd --user)
+  };
+}
+```
+
+The module automatically:
+- Adds orbit to system packages
+- Creates system-wide configuration
+- Sets up systemd service (system or user)
+</details>
+
 ### From Source
 
 ```bash
@@ -151,6 +190,8 @@ background = "#1e1e2e"
 foreground = "#d4d4d8"
 opacity = 0.91
 ```
+
+
 
 ## License
 
