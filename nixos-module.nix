@@ -20,10 +20,64 @@ in {
       description = "Window margin in pixels";
     };
     
+    marginTop = mkOption {
+      type = types.nullOr types.ints.positive;
+      default = null;
+      description = "Top margin in pixels (overrides margin if set)";
+    };
+    
+    marginRight = mkOption {
+      type = types.nullOr types.ints.positive;
+      default = null;
+      description = "Right margin in pixels (overrides margin if set)";
+    };
+    
+    marginBottom = mkOption {
+      type = types.nullOr types.ints.positive;
+      default = null;
+      description = "Bottom margin in pixels (overrides margin if set)";
+    };
+    
+    marginLeft = mkOption {
+      type = types.nullOr types.ints.positive;
+      default = null;
+      description = "Left margin in pixels (overrides margin if set)";
+    };
+    
+    windowTransition = mkOption {
+      type = types.str;
+      default = "slidedown";
+      description = "Window transition effect (slidedown, slideup, slideleft, slideright, fade)";
+    };
+    
+    windowTransitionDuration = mkOption {
+      type = types.ints.positive;
+      default = 200;
+      description = "Window transition duration in milliseconds";
+    };
+    
+    stackTransition = mkOption {
+      type = types.str;
+      default = "slidehorizontal";
+      description = "Stack transition effect (slidehorizontal, slidevertical, fade)";
+    };
+    
+    stackTransitionDuration = mkOption {
+      type = types.ints.positive;
+      default = 200;
+      description = "Stack transition duration in milliseconds";
+    };
+    
     user = mkOption {
       type = types.nullOr types.str;
       default = null;
       description = "User to run the service as (null for systemd --user)";
+    };
+    
+    extraConfig = mkOption {
+      type = types.lines;
+      default = "";
+      description = "Additional TOML configuration content";
     };
   };
 
@@ -34,10 +88,15 @@ in {
     environment.etc."orbit/config.toml" = {
       text = ''
         position = "${cfg.position}"
-        margin_top = ${toString cfg.margin}
-        margin_right = ${toString cfg.margin}
-        margin_bottom = ${toString cfg.margin}
-        margin_left = ${toString cfg.margin}
+        margin_top = ${toString (if cfg.marginTop != null then cfg.marginTop else cfg.margin)}
+        margin_right = ${toString (if cfg.marginRight != null then cfg.marginRight else cfg.margin)}
+        margin_bottom = ${toString (if cfg.marginBottom != null then cfg.marginBottom else cfg.margin)}
+        margin_left = ${toString (if cfg.marginLeft != null then cfg.marginLeft else cfg.margin)}
+        window_transition = "${cfg.windowTransition}"
+        window_transition_duration = ${toString cfg.windowTransitionDuration}
+        stack_transition = "${cfg.stackTransition}"
+        stack_transition_duration = ${toString cfg.stackTransitionDuration}
+        ${cfg.extraConfig}
       '';
     };
 
