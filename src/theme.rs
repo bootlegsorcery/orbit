@@ -69,19 +69,27 @@ impl Theme {
     }
     
     pub fn theme_path() -> Option<std::path::PathBuf> {
-        let home = std::env::var("HOME").ok()?;
-        Some(std::path::PathBuf::from(home)
-            .join(".config")
-            .join("orbit")
-            .join("theme.toml"))
+        // Use XDG_CONFIG_HOME if available, fall back to traditional ~/.config
+        let config_dir = if let Ok(xdg_config) = std::env::var("XDG_CONFIG_HOME") {
+            std::path::PathBuf::from(xdg_config)
+        } else {
+            let home = std::env::var("HOME").ok()?;
+            std::path::PathBuf::from(home).join(".config")
+        };
+        
+        Some(config_dir.join("orbit").join("theme.toml"))
     }
 
     pub fn style_css_path() -> Option<std::path::PathBuf> {
-        let home = std::env::var("HOME").ok()?;
-        Some(std::path::PathBuf::from(home)
-            .join(".config")
-            .join("orbit")
-            .join("style.css"))
+        // Use XDG_CONFIG_HOME if available, fall back to traditional ~/.config
+        let config_dir = if let Ok(xdg_config) = std::env::var("XDG_CONFIG_HOME") {
+            std::path::PathBuf::from(xdg_config)
+        } else {
+            let home = std::env::var("HOME").ok()?;
+            std::path::PathBuf::from(home).join(".config")
+        };
+        
+        Some(config_dir.join("orbit").join("style.css"))
     }
 
     fn hex_to_rgb(&self, hex: &str) -> (u8, u8, u8) {

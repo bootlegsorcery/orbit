@@ -82,10 +82,28 @@ impl Config {
     }
     
     pub fn config_path() -> Option<PathBuf> {
-        let home = std::env::var("HOME").ok()?;
-        Some(PathBuf::from(home)
-            .join(".config")
-            .join("orbit")
-            .join("config.toml"))
+        // Use XDG_CONFIG_HOME if available, fall back to traditional ~/.config
+        let config_dir = if let Ok(xdg_config) = std::env::var("XDG_CONFIG_HOME") {
+            PathBuf::from(xdg_config)
+        } else {
+            let home = std::env::var("HOME").ok()?;
+            PathBuf::from(home).join(".config")
+        };
+        
+        let user_config = config_dir.join("orbit").join("config.toml");
+        
+        // NixOS-specific: Fall back to system-wide config if user config doesn't exist
+        if Self::is_nixos() && !user_config.exists() {
+            let system_config = PathBuf::from("/etc/orbit/config.toml");
+            if system_config.exists() {
+                return Some(system_config);
+            }
+        }
+        
+        Some(user_config)
+    }
+    
+    fn is_nixos() -> bool {
+        std::path::Path::new("/etc/NIXOS").exists()
     }
 }
