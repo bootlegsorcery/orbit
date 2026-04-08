@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, orbitPackage, ... }:
 
 with lib;
 
@@ -28,7 +28,7 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.orbit ];
+    environment.systemPackages = [ orbitPackage ];
 
     # System-wide configuration file
     environment.etc."orbit/config.toml" = {
@@ -48,7 +48,7 @@ in {
       wantedBy = [ "multi-user.target" ];
       
       serviceConfig = {
-        ExecStart = "${pkgs.orbit}/bin/orbit daemon";
+        ExecStart = "${orbitPackage}/bin/orbit daemon";
         Restart = "always";
         RestartSec = "3";
         User = cfg.user;
@@ -62,7 +62,7 @@ in {
       wantedBy = [ "default.target" ];
       
       serviceConfig = {
-        ExecStart = "${pkgs.orbit}/bin/orbit daemon";
+        ExecStart = "${orbitPackage}/bin/orbit daemon";
         Restart = "always";
         RestartSec = "3";
       };

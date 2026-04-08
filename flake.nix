@@ -36,6 +36,10 @@
         };
       }
     ) // {
-      nixosModules.orbit = import ./nixos-module.nix;
+      nixosModules.orbit = { config, lib, pkgs, ... }:
+        import ./nixos-module.nix {
+          inherit config lib pkgs;
+          orbitPackage = self.packages.${pkgs.system}.default;
+        };
     };
 }
