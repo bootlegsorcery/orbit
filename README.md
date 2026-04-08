@@ -59,8 +59,10 @@ After installation, enable the background daemon:
 systemctl --user enable --now orbit
 ```
 
+### NixOS
+
 <details>
-<summary><b>NixOS</b></summary>
+<summary><b>Show NixOS installation details</b></summary>
 
 Add to your `flake.nix`:
 
@@ -86,16 +88,23 @@ In your `configuration.nix`:
   services.orbit = {
     enable = true;
     position = "top-right";  # center, top-left, top-right, bottom-left, bottom-right
-    margin = 12;            # Window margin in pixels
-    # user = "username";   # Optional: run as specific user (null for systemd --user)
+    margin = 12;            # Global margin in pixels
+    # marginTop = 20;       # Individual margin overrides
+    # marginRight = 12;
+    # marginBottom = 12;
+    # marginLeft = 12;
+    windowTransition = "slidedown";  # slidedown, slideup, slideleft, slideright, fade
+    windowTransitionDuration = 200;   # milliseconds
+    stackTransition = "slidehorizontal";  # slidehorizontal, slidevertical, fade
+    stackTransitionDuration = 200;        # milliseconds
+    # user = "username";    # Run as specific user (null for systemd --user)
+    # extraConfig = '''     # Additional TOML configuration
+    #   accent_primary = "#8b5cf6"
+    #   background = "#1e1e2e"
+    # ''';
   };
 }
 ```
-
-The module automatically:
-- Adds orbit to system packages
-- Creates system-wide configuration
-- Sets up systemd service (system or user)
 </details>
 
 ### From Source
