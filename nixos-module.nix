@@ -68,11 +68,7 @@ in {
       description = "Stack transition duration in milliseconds";
     };
     
-    user = mkOption {
-      type = types.nullOr types.str;
-      default = null;
-      description = "User to run the service as (null for systemd --user)";
-    };
+
     
     extraConfig = mkOption {
       type = types.lines;
@@ -100,30 +96,21 @@ in {
       '';
     };
 
-    # Service configuration
-    systemd.services.orbit = mkIf (cfg.user != null) {
-      description = "Orbit WiFi/Bluetooth Manager";
-      after = [ "network.target" ];
-      wantedBy = [ "multi-user.target" ];
-      
-      serviceConfig = {
-        ExecStart = "${orbitPackage}/bin/orbit daemon";
-        Restart = "always";
-        RestartSec = "3";
-        User = cfg.user;
-      };
-    };
 
-    # User service for systemd --user
-    systemd.user.services.orbit = mkIf (cfg.user == null) {
+
+    # User service - Orbit must run as a user service for Wayland compatibility
+    systemd.user.services.orbit = {
       description = "Orbit WiFi/Bluetooth Manager";
       after = [ "graphical-session.target" ];
+      wants = [ "pipewire.service" "wireplumber.service" ];
       wantedBy = [ "default.target" ];
       
       serviceConfig = {
         ExecStart = "${orbitPackage}/bin/orbit daemon";
         Restart = "always";
         RestartSec = "3";
+        # Let GTK auto-discover Wayland display through DBus
+        Environment = "DBUS_SESSION_BUS_ADDRESS=unix:path=%t/bus";
       };
     };
   };

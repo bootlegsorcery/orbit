@@ -97,7 +97,7 @@ In your `configuration.nix`:
     windowTransitionDuration = 200;   # milliseconds
     stackTransition = "slidehorizontal";  # slidehorizontal, slidevertical, fade
     stackTransitionDuration = 200;        # milliseconds
-    # user = "username";    # Run as specific user (null for systemd --user)
+
     # extraConfig = '''     # Additional TOML configuration
     #   accent_primary = "#8b5cf6"
     #   background = "#1e1e2e"
